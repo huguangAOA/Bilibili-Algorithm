@@ -17,7 +17,6 @@
 #include <vector>
 using namespace std;
 
-#define BASE 10000
 #define MAX_N 1000
 int a[MAX_N + 5], b[MAX_N + 5], ind[MAX_N + 5];
 
@@ -28,66 +27,45 @@ public :
         proccess_digit();
         return ;
     }
-    void output_digit(int x, bool flag, ostream &out) const {
-        if (flag) {
-            out << x;
-            return ;
-        }
-        int y = BASE / 10;
-        while (y) {
-            out << x / y;
-            x %= y;
-            y /= 10;
-        }
-        return ;
-    }
-    void output(ostream &out) const {
-        for (int i = size() - 1; i >= 0; i--) {
-            output_digit(at(i), i == size() - 1, out);
-        }
-        return ;
-    }
-    bool operator>(const BigInt &obj) const {
-        if (size() != obj.size()) return size() > obj.size();
-        for (int i = size() - 1; i >= 0; i--) {
-            if (at(i) != obj[i]) return at(i) > obj[i];
-        }
-        return false;
-    }
-    void operator*=(int x) {
-        for (int i = 0; i < size(); i++) {
-            at(i) *= x;
-        }
-        proccess_digit();
-        return ;
-    }
-    BigInt operator/(int x) const {
-        int y = 0;
+    BigInt operator/(int x) {
         BigInt ret(*this);
+        int y = 0;
         for (int i = size() - 1; i >= 0; i--) {
-            y = y * BASE + at(i);
+            y = y * 10 + at(i);
             ret[i] = y / x;
             y %= x;
         }
         ret.proccess_digit();
         return ret;
     }
+    void operator*=(int x) {
+        for (int i = 0; i < size(); i++) at(i) *= x;
+        proccess_digit();
+        return ;
+    }
+    bool operator>(const BigInt &a) const {
+        if (size() != a.size()) return size() > a.size();
+        for (int i = size() - 1; i >= 0; i--) {
+            if (at(i) != a[i]) return at(i) > a[i];
+        }
+        return false;
+    }
     void proccess_digit() {
         for (int i = 0; i < size(); i++) {
-            if (at(i) < BASE) continue;
+            if (at(i) < 10) continue;
             if (i + 1 == size()) this->push_back(0);
-            at(i + 1) += at(i) / BASE;
-            at(i) %= BASE;
+            at(i + 1) += at(i) / 10;
+            at(i) %= 10;
         }
-        while (size() > 1 && at(size() - 1) == 0) {
-            this->pop_back();
-        }
+        while (size() > 1 && at(size() - 1) == 0) this->pop_back();
         return ;
     }
 };
 
 ostream &operator<<(ostream &out, const BigInt &a) {
-    a.output(out);
+    for (int i = a.size() - 1; i >= 0; i--) {
+        out << a[i];
+    }
     return out;
 }
 
@@ -95,8 +73,8 @@ int main() {
     int n;
     cin >> n;
     for (int i = 0; i <= n; i++) {
-        ind[i] = i;
         cin >> a[i] >> b[i];
+        ind[i] = i;
     }
     sort(ind + 1, ind + n + 1, [&](int i, int j) -> bool {
         return a[i] * b[i] < a[j] * b[j];
