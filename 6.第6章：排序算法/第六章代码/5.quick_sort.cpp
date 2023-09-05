@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "0.sort_test.h"
+#define swap(a, b) { \
+    __typeof(a) __c = a; \
+    a = b, b = __c; \
+}
 
 void quick_sort(int *arr, int l, int r) {
     if (r - l <= 2) {
@@ -44,9 +48,9 @@ void quick_sort_v1(int *arr, int l, int r) {
             swap(arr[x], arr[y]);
             ++x, --y;
         }
-    } while (x <= y);    
-    quick_sort(arr, l, x);
-    quick_sort(arr, x, r);
+    } while (x <= y);
+    quick_sort_v1(arr, l, y + 1);
+    quick_sort_v1(arr, x, r);
     return ;
 }
 
@@ -78,8 +82,8 @@ void quick_sort_v2(int *arr, int l, int r) {
             ++x, --y;
         }
     } while (x <= y);    
-    quick_sort(arr, l, x);
-    quick_sort(arr, x, r);
+    quick_sort_v2(arr, l, y + 1);
+    quick_sort_v2(arr, x, r);
     return ;
 }
 
@@ -104,8 +108,8 @@ void quick_sort_v3(int *arr, int l, int r) {
                 swap(arr[x], arr[y]);
                 ++x, --y;
             }
-        } while (x <= y);    
-        quick_sort(arr, l, x); // left
+        } while (x <= y);
+        quick_sort_v3(arr, l, y + 1); // left
         l = x;
     }
     return ;
@@ -122,6 +126,7 @@ void unguarded_insert_sort(int *arr, int l, int r) {
         swap(arr[ind], arr[ind - 1]);
         ind -= 1;
     }
+//------------------------------------//
     for (int i = l + 1; i < r; i++) {
         int j = i;
         while (arr[j] < arr[j - 1]) {
@@ -149,7 +154,7 @@ void __quick_sort_v4(int *arr, int l, int r) {
                 ++x, --y;
             }
         } while (x <= y);    
-        quick_sort(arr, l, x); // left
+        __quick_sort_v4(arr, l, y + 1); // left
         l = x;
     }
     return ;
