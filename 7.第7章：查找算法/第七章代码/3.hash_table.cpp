@@ -38,6 +38,10 @@ Node *getNewNode(const char *s) {
 HashTable * getNewHashTable(int n) {
     HashTable *h = (HashTable *)malloc(sizeof(HashTable));
     h->data = (Node *)malloc(sizeof(Node) * n);
+    // 勘误: h->data[i] 的 next 指针域要初始化为 NULL
+    for (int i = 0; i < n; i++) {
+        h->data[i].next = NULL;
+    }
     h->size = n;
     h->cnt = 0;
     return h;
